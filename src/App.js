@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css';
 
 const App = () => {
@@ -8,13 +8,42 @@ const App = () => {
   const [editId, setEditId] = useState(0);
 
 
+  useEffect(() => {
+    getLocalTodos();
+  }, []);
+
+  useEffect(() => {
+
+    saveLocalTodos();
+  }, [todos])
+
+
+  //Local Storage
+  const saveLocalTodos = () => {
+
+    if (todos.length > 0) {
+      localStorage.setItem("todos", JSON.stringify(todos))
+    }
+
+  }
+
+  const getLocalTodos = () => {
+    if (localStorage.getItem("todos") === null) {
+      localStorage.setItem("todos", JSON.stringify([]))
+    } else {
+      let todoLocal = JSON.parse(localStorage.getItem("todos"));
+      setTodos(todoLocal);
+    }
+  }
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (editId) {
       const editTodo = todos.find((task) => task.id === editId);
       const updatedTodos = todos.map((task) => task.id === editTodo.id ?
-        (task = { id: task.id, todo }) : { id: task.id, todo: task.todo }
+        task = { id: task.id, todo } : { id: task.id, todo: task.todo }
       );
       setTodos(updatedTodos);
       setEditId(0);
